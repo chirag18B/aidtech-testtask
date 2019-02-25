@@ -1,5 +1,15 @@
+/**
+ * No instance required, all functions static
+ *
+ * @class
+ */
 const Validations = class {
-  static checkArgsLength(args, expectedLength) {
+  /**
+   * Validation: to check length of the argument matches expected length
+   *
+   * @function checkLength
+   */
+  static checkLength(args, expectedLength) {
     if (args.length !== expectedLength) {
       _throw(
         `Invalid number of arguments. Expected ${expectedLength}, got ${
@@ -9,6 +19,11 @@ const Validations = class {
     }
   }
 
+  /**
+   * Validation: to check length of the argument is within a given range
+   *
+   * @function checkArgsLengthIsWithinRange
+   */
   static checkArgsLengthIsWithinRange(args, lowerLimit, upperLimit) {
     if (args.length < lowerLimit || args.length > upperLimit) {
       _throw(
@@ -18,14 +33,11 @@ const Validations = class {
     }
   }
 
-  static equalsLength(arg, size) {
-    if (arg.length !== size) {
-      _throw(
-        `Invalid argument length. Expected string of length: ${size}, got: ${arg}.`
-      );
-    }
-  }
-
+  /**
+   * Validation: check argument is an array
+   *
+   * @function isArray
+   */
   static isArray(arg) {
     if (!Array.isArray(arg)) {
       _throw(
@@ -34,24 +46,44 @@ const Validations = class {
     }
   }
 
+  /**
+   * Validation: check state retrieval from state store was successful
+   *
+   * @function checkSuccessfulStateRetrieval
+   */
   static checkSuccessfulStateRetrieval(donationData) {
     if (!donationData) {
       _throw(`Failed to get state.`);
     }
   }
 
+  /**
+   * Validation: check if data is empty and throw
+   *
+   * @function throwIfEmpty
+   */
   static throwIfEmpty(donationData) {
     if (_isEmpty(donationData)) {
       _throw(`Donation data is absent OR no state registered.`);
     }
   }
 
+  /**
+   * Validation: check if number is deivisible by two
+   *
+   * @function isDivisibleByTwo
+   */
   static isDivisibleByTwo(number) {
     if (number % 2 !== 0) {
       _throw(`Number of elements in update request should be even`);
     }
   }
 
+  /**
+   * Validation: check if given project is valid
+   *
+   * @function isValidProject
+   */
   static isValidProject(givenProject) {
     const projects = ["FAO", "ILO", "IMO", "ITU", "WHO"];
     const result = projects.includes(givenProject);
@@ -64,6 +96,11 @@ const Validations = class {
     return result;
   }
 
+  /**
+   * Validation: check if given item type is valid
+   *
+   * @function isValidItemType
+   */
   static isValidItemType(givenItemType) {
     const itemTypes = [
       "water",
@@ -88,6 +125,11 @@ const Validations = class {
     return result;
   }
 
+  /**
+   * Validation: check if given amount is valid
+   *
+   * @function isValidAmount
+   */
   static isValidAmount(givenAmount) {
     const result = !isNaN(givenAmount);
     if (!result) {
@@ -99,6 +141,11 @@ const Validations = class {
     return result;
   }
 
+  /**
+   * Validation: check arguments of a donation object
+   *
+   * @function checkDonationArgsType
+   */
   static checkDonationArgsType(args) {
     const [project, itemType, amount] = args;
     const validity =
@@ -109,10 +156,20 @@ const Validations = class {
   }
 };
 
+/**
+ * check if empty string
+ *
+ * @function _isEmpty
+ */
 const _isEmpty = value => {
   return value.toString() === "" ? true : false;
 };
 
+/**
+ * throws with the given message when called
+ *
+ * @function _throw
+ */
 const _throw = msg => {
   throw new Error(msg);
 };
