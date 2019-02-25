@@ -1,0 +1,63 @@
+Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: crypto-config/ordererOrganizations/aidtech.com/msp
+
+    - &Orgone
+        Name: OrgoneMSP
+        ID: OrgoneMSP
+        MSPDir: crypto-config/peerOrganizations/orgone.aidtech.com/msp
+        AnchorPeers:
+            - Host: peer0.orgone.aidtech.com
+              Port: 7051
+
+    - &Orgtwo
+        Name: OrgtwoMSP
+        ID: OrgtwoMSP
+        MSPDir: crypto-config/peerOrganizations/orgtwo.aidtech.com/msp
+        AnchorPeers:
+            - Host: peer0.orgtwo.aidtech.com
+              Port: 7051
+
+Capabilities:
+    Global: &ChannelCapabilities
+        V1_1: true
+    Orderer: &OrdererCapabilities
+        V1_1: true
+    Application: &ApplicationCapabilities
+        V1_2: true
+
+Application: &ApplicationDefaults
+    Organizations:
+
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+        - orderer.aidtech.com:7050
+
+Profiles:
+    AidtechOrdererGenesis:
+        Capabilities:
+            <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            AidtechConsortium:
+                Organizations:
+                    - *Orgone
+                    - *Orgtwo
+
+    AidtechChannel:
+        Consortium: AidtechConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Orgone
+                - *Orgtwo
+            Capabilities:
+                <<: *ApplicationCapabilities
