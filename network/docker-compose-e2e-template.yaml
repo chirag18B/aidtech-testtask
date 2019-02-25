@@ -1,0 +1,67 @@
+version: "2"
+
+volumes:
+  orderer.aidtech.com:
+  peer0.orgone.aidtech.com:
+  peer0.orgtwo.aidtech.com:
+
+networks:
+  aidtech:
+services:
+  ca0:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-orgone
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.orgone.aidtech.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.orgone.aidtech.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/orgone.aidtech.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrgone
+    networks:
+      - aidtech
+
+  ca1:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-orgtwo
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.orgtwo.aidtech.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.orgtwo.aidtech.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/orgtwo.aidtech.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerOrgtwo
+    networks:
+      - aidtech
+
+  orderer.aidtech.com:
+    extends:
+      file: base/docker-compose-base.yaml
+      service: orderer.aidtech.com
+    container_name: orderer.aidtech.com
+    networks:
+      - aidtech
+
+  peer0.orgone.aidtech.com:
+    container_name: peer0.orgone.aidtech.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.orgone.aidtech.com
+    networks:
+      - aidtech
+
+  peer0.orgtwo.aidtech.com:
+    container_name: peer0.orgtwo.aidtech.com
+    extends:
+      file: base/docker-compose-base.yaml
+      service: peer0.orgtwo.aidtech.com
+    networks:
+      - aidtech
