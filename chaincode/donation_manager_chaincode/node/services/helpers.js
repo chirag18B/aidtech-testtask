@@ -1,10 +1,26 @@
 const { isDivisibleByTwo } = require("./validations");
 
+/**
+ * No instance required, all functions static
+ *
+ * @class
+ * @classdesc Provides helper functions
+ */
 const Helpers = class {
-  static toBuffer(value) {
+  /**
+   * Helper: convert JSON to Buffer
+   *
+   * @function jsonToBuffer
+   */
+  static jsonToBuffer(value) {
     return Buffer.from(JSON.stringify(value));
   }
 
+  /**
+   * Helper: convert Buffer to JSON
+   *
+   * @function bufferToJSON
+   */
   static bufferToJSON(buffer) {
     try {
       const response =
@@ -17,10 +33,20 @@ const Helpers = class {
     }
   }
 
+  /**
+   * Helper: check if value is empty
+   *
+   * @function isEmpty
+   */
   static isEmpty(value) {
     return value.toString() === "" ? true : false;
   }
 
+  /**
+   * Helper: default to undefined if empty
+   *
+   * @function defaultToUndefinedIfEmpty
+   */
   static defaultToUndefinedIfEmpty(value) {
     if (value.toString() === "") {
       console.info("Defaulting to undefined.");
@@ -30,6 +56,11 @@ const Helpers = class {
     return value;
   }
 
+  /**
+   * Helper: format array to JSON donation object
+   *
+   * @function formatToJson
+   */
   static formatToJson(args) {
     let obj = {
       project: args[0],
@@ -42,10 +73,11 @@ const Helpers = class {
     return obj;
   }
 
-  static jsonToBuffer(obj) {
-    return Buffer.from(JSON.stringify(obj));
-  }
-
+  /**
+   * Helper: create a JSON donation object for state update functions
+   *
+   * @function createUpdateJson
+   */
   static createUpdateJson(array) {
     return new Promise(function(resolve, reject) {
       try {
@@ -67,6 +99,12 @@ const Helpers = class {
     });
   }
 
+  /**
+   * Helper: get results for a query using an iterator
+   *
+   * @async
+   * @function getAllResults
+   */
   static async getAllResults(iterator, isHistory) {
     console.info(`Entered _getAllResults query with isHistory: ${isHistory}`);
     let allResults = [];
