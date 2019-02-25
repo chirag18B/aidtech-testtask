@@ -1,0 +1,16 @@
+{
+  "name": "donation_manager_chaincode",
+  "version": "1.0.0",
+  "description": "Hyperledger Fabric chaincode to manage Donations to be spent on a particular Item.",
+  "engines": {
+    "node": ">=8.4.0",
+    "npm": ">=5.3.0"
+  },
+  "scripts": {
+    "start": "node donationManager.js"
+  },
+  "engine-strict": true,
+  "dependencies": {
+    "fabric-shim": "unstable"
+  }
+}
