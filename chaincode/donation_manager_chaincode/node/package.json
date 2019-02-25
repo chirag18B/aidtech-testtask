@@ -7,10 +7,27 @@
     "npm": ">=5.3.0"
   },
   "scripts": {
-    "start": "node donationManager.js"
+    "start": "node donationManager.js",
+    "test": "mocha"
   },
   "engine-strict": true,
   "dependencies": {
-    "fabric-shim": "unstable"
-  }
+    "fabric-shim": "unstable",
+    "sinon": "^7.2.4"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.0.1",
+    "supertest": "^3.4.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chirag18B/aidtech-testtask.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chirag18B/aidtech-testtask/issues"
+  },
+  "homepage": "https://github.com/chirag18B/aidtech-testtask#readme"
 }
