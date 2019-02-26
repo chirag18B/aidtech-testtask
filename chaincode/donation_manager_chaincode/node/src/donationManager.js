@@ -3,6 +3,7 @@ const util = require("util");
 
 const Validations = require("./validations");
 const Helpers = require("./helpers");
+const { INDEX, ID_LENGTH, PARAM_LENGTH } = require("./constants");
 
 /**
  * Provides functionality for DonationManager chaincode
@@ -10,6 +11,9 @@ const Helpers = require("./helpers");
  * @class
  * @requires Validations
  * @requires Helpers
+ * @requires INDEX
+ * @requires ID_LENGTH
+ * @requires PARAM_LENGTH
  * @requires shim
  * @requires util
  */
@@ -28,7 +32,7 @@ class DonationManager {
     const args = ret.params;
 
     try {
-      Validations.checkLength(args, 0);
+      Validations.checkLength(args, PARAM_LENGTH.Init);
       return shim.success();
     } catch (err) {
       return shim.error(err);
@@ -74,15 +78,15 @@ class DonationManager {
    * @param {Object} stub - encapsulates the APIs between the chaincode implementation and the Fabric peer
    * @param {Array} args - contains donation ID to query
    * @throws Will throw if number of input arguments is not one
-   * @throws Will throw if if argument length is not 64
+   * @throws Will throw if if argument length is not ID_LENGTH
    * @throws Will throw if state retrieval fails
    * @returns {Buffer} donation object for a given donation ID
    */
   async readDonation(stub, args) {
-    Validations.checkLength(args, 1);
-    Validations.checkLength(args[0], 64);
+    Validations.checkLength(args, PARAM_LENGTH.readDonation);
+    Validations.checkLength(args[INDEX.donationId], ID_LENGTH);
 
-    const donationId = args[0];
+    const donationId = args[INDEX.donationId];
     console.info(`Query for Donation ID: ${donationId}`);
 
     let donationData = await stub.getState(donationId);
@@ -106,7 +110,7 @@ class DonationManager {
    * @param {Object} stub - encapsulates the APIs between the chaincode implementation and the Fabric peer
    * @param {Array} donationIds - contains donation IDs to query
    * @throws Will throw if donationIds is not an Array
-   * @throws Will throw if donationId length is not 64
+   * @throws Will throw if donationId length is not ID_LENGTH
    * @throws Will throw if state retrieval fails
    * @returns {ArrayBuffer} Array of donation objects for given donation IDs
    */
@@ -117,9 +121,9 @@ class DonationManager {
     console.info(`Query for Donation IDs: ${donationIds}`);
 
     // Get the state from the ledger
-    for (let i = 0; i < donationIds.length; i++) {
-      const donationId = donationIds[i];
-      Validations.checkLength(donationId, 64);
+    for (let index = 0; index < donationIds.length; index++) {
+      const donationId = donationIds[index];
+      Validations.checkLength(donationId, ID_LENGTH);
       let donationData = await stub.getState(donationId);
       Validations.checkSuccessfulStateRetrieval(donationData);
       donationData = Helpers.defaultToUndefinedIfEmpty(donationData);
@@ -143,13 +147,13 @@ class DonationManager {
    * @param {Object} stub - encapsulates the APIs between the chaincode implementation and the Fabric peer
    * @param {Array} args - contains donation ID to query
    * @throws Will throw if number of input arguments is not one
-   * @throws Will throw if if argument length is not 64
+   * @throws Will throw if if argument length is not ID_LENGTH
    * @returns {Buffer} Object containing bool values
    */
   async isPresent(stub, args) {
-    Validations.checkLength(args, 1);
-    Validations.checkLength(args[0], 64);
-    const donationId = args[0];
+    Validations.checkLength(args, PARAM_LENGTH.isPresent);
+    Validations.checkLength(args[INDEX.donationId], ID_LENGTH);
+    const donationId = args[INDEX.donationId];
     const donationData = await stub.getState(donationId);
     const response = { exists: !Helpers.isEmpty(donationData) };
     return Helpers.jsonToBuffer(response);
@@ -163,13 +167,13 @@ class DonationManager {
    * @param {Object} stub - encapsulates the APIs between the chaincode implementation and the Fabric peer
    * @param {Array} args - contains donation ID to query
    * @throws Will throw if number of input arguments is not one
-   * @throws Will throw if if argument length is not 64
+   * @throws Will throw if if argument length is not ID_LENGTH
    * @returns {ArrayBuffer} Array of state update details for a given donation ID
    */
   async getHistoryForDonation(stub, args) {
-    Validations.checkLength(args, 1);
-    Validations.checkLength(args[0], 64);
-    const donationId = args[0];
+    Validations.checkLength(args, PARAM_LENGTH.getHistoryForDonation);
+    Validations.checkLength(args[INDEX.donationId], ID_LENGTH);
+    const donationId = args[INDEX.donationId];
     console.info("Get history for Donation ID: %s\n", donationId);
 
     const resultsIterator = await stub.getHistoryForKey(donationId);
@@ -190,12 +194,12 @@ class DonationManager {
    * @returns {Buffer} Object containing the donation ID created
    */
   async addDonation(stub, donationData) {
-    Validations.checkLength(donationData, 3);
+    Validations.checkLength(donationData, PARAM_LENGTH.addDonation);
     const timestamp = stub.getTxTimestamp();
     const validity = Validations.checkDonationArgsType(donationData);
 
-    donationData[3] = timestamp;
-    donationData[4] = validity;
+    donationData[INDEX.timestamp] = timestamp;
+    donationData[INDEX.validity] = validity;
     const donationObj = Helpers.formatToJson(donationData);
     const donationId = stub.getTxID();
 
@@ -220,14 +224,18 @@ class DonationManager {
    * @param {Object} stub - encapsulates the APIs between the chaincode implementation and the Fabric peer
    * @param {Array} updatedDonationData - contains project, itemType, amount tags as well as the updated values. First all required tags are mentioned and then values are mentioned
    * @throws Will throw if number of input arguments is not between 3 and 7
-   * @throws Will throw if if first argument length is not 64
+   * @throws Will throw if if first argument length is not ID_LENGTH
    * @throws Will throw if stae retrived for given donationID is empty
    * @returns {Buffer} Object containing the donation ID updated and the transaction ID
    */
   async updateDonation(stub, updatedDonationData) {
-    const donationId = updatedDonationData[0];
-    Validations.checkLength(donationId, 64);
-    Validations.checkArgsLengthIsWithinRange(updatedDonationData, 3, 7);
+    const donationId = updatedDonationData[INDEX.donationId];
+    Validations.checkLength(donationId, ID_LENGTH);
+    Validations.checkArgsLengthIsWithinRange(
+      updatedDonationData,
+      PARAM_LENGTH.updateDonationLowerLimit,
+      PARAM_LENGTH.updateDonationUpperLimit
+    );
     const updatedDonationJson = await Helpers.createUpdateJson(
       updatedDonationData.slice(1)
     );
@@ -268,14 +276,14 @@ class DonationManager {
    * @param {Object} stub - encapsulates the APIs between the chaincode implementation and the Fabric peer
    * @param {Array} donationData - contains donation ID to be removed
    * @throws Will throw if number of input arguments is not one
-   * @throws Will throw if if first argument length is not 64
+   * @throws Will throw if if first argument length is not ID_LENGTH
    * @throws Will throw if stae retrived for given donationID is empty
    * @returns {Buffer} Object containing the donation ID removed and the transaction ID
    */
   async removeDonation(stub, donationData) {
-    Validations.checkLength(donationData, 1);
-    Validations.checkLength(donationData[0], 64);
-    const donationId = donationData[0];
+    Validations.checkLength(donationData, PARAM_LENGTH.readDonation);
+    Validations.checkLength(donationData[INDEX.donationId], ID_LENGTH);
+    const donationId = donationData[INDEX.donationId];
 
     try {
       const fetchedState = await stub.getState(donationId);

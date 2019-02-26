@@ -1,4 +1,5 @@
 const { isDivisibleByTwo } = require("./validations");
+const { INDEX } = require("./constants");
 
 /**
  * Helper: convert JSON to Buffer
@@ -54,11 +55,11 @@ function defaultToUndefinedIfEmpty(value) {
  */
 function formatToJson(args) {
   let obj = {
-    project: args[0],
-    itemType: args[1],
-    amount: parseFloat(args[2]),
-    timestamp: args[3],
-    validity: args[4]
+    project: args[INDEX.project],
+    itemType: args[INDEX.itemType],
+    amount: parseFloat(args[INDEX.amount]),
+    timestamp: args[INDEX.timestamp],
+    validity: args[INDEX.validity]
   };
 
   return obj;
