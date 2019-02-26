@@ -25,7 +25,6 @@ class DonationManager {
   Init(stub) {
     console.info("========= Donation Manager Init =========");
     const ret = stub.getFunctionAndParameters();
-    console.log("------------------", ret)
     const args = ret.params;
 
     try {
@@ -295,5 +294,4 @@ class DonationManager {
   }
 }
 
-// shim.start(new DonationManager());
 module.exports = DonationManager;
