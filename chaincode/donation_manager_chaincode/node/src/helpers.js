@@ -135,7 +135,7 @@ async function getAllResults(iterator, isHistory) {
   }
 }
 
-module.exports = [
+module.exports = {
   jsonToBuffer,
   createUpdateJson,
   formatToJson,
@@ -143,4 +143,4 @@ module.exports = [
   getAllResults,
   isEmpty,
   bufferToJSON
-];
+};

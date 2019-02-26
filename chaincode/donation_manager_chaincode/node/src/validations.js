@@ -170,7 +170,7 @@ const _throw = msg => {
   throw new Error(msg);
 };
 
-module.exports = [
+module.exports = {
   checkDonationArgsType,
   isValidAmount,
   isValidItemType,
@@ -181,4 +181,4 @@ module.exports = [
   isArray,
   checkArgsLengthIsWithinRange,
   checkLength
-];
+};
