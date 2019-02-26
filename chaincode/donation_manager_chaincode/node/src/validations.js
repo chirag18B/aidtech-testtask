@@ -16,6 +16,7 @@ function checkLength(args, expectedLength) {
       } in args: ${args}.`
     );
   }
+  return;
 }
 
 /**
@@ -30,6 +31,7 @@ function checkArgsLengthIsWithinRange(args, lowerLimit, upperLimit) {
           got ${args.length} in args: ${args}.`
     );
   }
+  return;
 }
 
 /**
@@ -41,6 +43,7 @@ function isArray(arg) {
   if (!Array.isArray(arg)) {
     _throw(`Invalid argument type. Expected array, got ${typeof arg} ${arg}.`);
   }
+  return;
 }
 
 /**
@@ -52,6 +55,7 @@ function checkSuccessfulStateRetrieval(donationData) {
   if (!donationData) {
     _throw(`Failed to get state.`);
   }
+  return;
 }
 
 /**
@@ -63,6 +67,7 @@ function throwIfEmpty(donationData) {
   if (_isEmpty(donationData)) {
     _throw(`Donation data is absent OR no state registered.`);
   }
+  return;
 }
 
 /**
@@ -74,6 +79,7 @@ function isDivisibleByTwo(number) {
   if (number % 2 !== 0) {
     _throw(`Number of elements in update request should be even`);
   }
+  return;
 }
 
 /**

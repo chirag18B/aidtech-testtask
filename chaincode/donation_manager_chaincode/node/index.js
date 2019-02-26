@@ -1,5 +1,5 @@
 const shim = require("fabric-shim");
 
-const DonationManager = require("./donationManager");
+const DonationManager = require("./src/donationManager");
 
 shim.start(new DonationManager());
