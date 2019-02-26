@@ -12,7 +12,7 @@ function checkLength(args, expectedLength) {
   if (args.length !== expectedLength) {
     _throw(
       `Invalid number of arguments. Expected ${expectedLength}, got ${
-      args.length
+        args.length
       } in args: ${args}.`
     );
   }
@@ -39,9 +39,7 @@ function checkArgsLengthIsWithinRange(args, lowerLimit, upperLimit) {
  */
 function isArray(arg) {
   if (!Array.isArray(arg)) {
-    _throw(
-      `Invalid argument type. Expected array, got ${typeof arg} ${arg}.`
-    );
+    _throw(`Invalid argument type. Expected array, got ${typeof arg} ${arg}.`);
   }
 }
 
@@ -173,13 +171,13 @@ const _throw = msg => {
 };
 
 module.exports = [
-  checkDonationArgsType, 
-  isValidAmount, 
-  isValidItemType, 
-  isValidProject, 
-  isDivisibleByTwo, 
-  throwIfEmpty, 
-  checkSuccessfulStateRetrieval, 
+  checkDonationArgsType,
+  isValidAmount,
+  isValidItemType,
+  isValidProject,
+  isDivisibleByTwo,
+  throwIfEmpty,
+  checkSuccessfulStateRetrieval,
   isArray,
   checkArgsLengthIsWithinRange,
   checkLength
