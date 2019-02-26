@@ -11,9 +11,7 @@
 function checkLength(args, expectedLength) {
   if (args.length !== expectedLength) {
     _throw(
-      `Invalid number of arguments. Expected ${expectedLength}, got ${
-        args.length
-      } in args: ${args}.`
+      `Invalid number of arguments. Expected ${expectedLength}, got ${args.length} in args: ${args}.`
     );
   }
   return;
@@ -27,8 +25,7 @@ function checkLength(args, expectedLength) {
 function checkArgsLengthIsWithinRange(args, lowerLimit, upperLimit) {
   if (args.length < lowerLimit || args.length > upperLimit) {
     _throw(
-      `Invalid number of arguments. Expected length between ${lowerLimit}-${upperLimit}, 
-          got ${args.length} in args: ${args}.`
+      `Invalid number of arguments. Expected length between ${lowerLimit}-${upperLimit}, got ${args.length} in args: ${args}.`
     );
   }
   return;
