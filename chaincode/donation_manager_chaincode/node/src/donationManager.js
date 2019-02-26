@@ -1,8 +1,8 @@
 const shim = require("fabric-shim");
 const util = require("util");
 
-const Validations = require("./services/validations");
-const Helpers = require("./services/helpers");
+const Validations = require("./validations");
+const Helpers = require("./helpers");
 
 /**
  * Provides functionality for DonationManager chaincode

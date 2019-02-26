@@ -1,18 +1,12 @@
 const { isDivisibleByTwo } = require("./validations");
 
-/**
- * No instance required, all functions static
- *
- * @class
- * @classdesc Provides helper functions
- */
-const Helpers = class {
+
   /**
    * Helper: convert JSON to Buffer
    *
    * @function jsonToBuffer
    */
-  static jsonToBuffer(value) {
+  function jsonToBuffer(value) {
     return Buffer.from(JSON.stringify(value));
   }
 
@@ -21,7 +15,7 @@ const Helpers = class {
    *
    * @function bufferToJSON
    */
-  static bufferToJSON(buffer) {
+  function bufferToJSON(buffer) {
     try {
       const response =
         buffer.toString() === "undefined"
@@ -38,7 +32,7 @@ const Helpers = class {
    *
    * @function isEmpty
    */
-  static isEmpty(value) {
+  function isEmpty(value) {
     return value.toString() === "" ? true : false;
   }
 
@@ -47,7 +41,7 @@ const Helpers = class {
    *
    * @function defaultToUndefinedIfEmpty
    */
-  static defaultToUndefinedIfEmpty(value) {
+  function defaultToUndefinedIfEmpty(value) {
     if (value.toString() === "") {
       console.info("Defaulting to undefined.");
 
@@ -61,7 +55,7 @@ const Helpers = class {
    *
    * @function formatToJson
    */
-  static formatToJson(args) {
+  function formatToJson(args) {
     let obj = {
       project: args[0],
       itemType: args[1],
@@ -78,7 +72,7 @@ const Helpers = class {
    *
    * @function createUpdateJson
    */
-  static createUpdateJson(array) {
+  function createUpdateJson(array) {
     return new Promise(function(resolve, reject) {
       try {
         isDivisibleByTwo(array.length);
@@ -105,7 +99,7 @@ const Helpers = class {
    * @async
    * @function getAllResults
    */
-  static async getAllResults(iterator, isHistory) {
+  async function getAllResults(iterator, isHistory) {
     console.info(`Entered _getAllResults query with isHistory: ${isHistory}`);
     let allResults = [];
     while (true) {
@@ -143,6 +137,5 @@ const Helpers = class {
       }
     }
   }
-};
 
-module.exports = Helpers;
+module.exports = [jsonToBuffer, createUpdateJson, formatToJson, defaultToUndefinedIfEmpty, getAllResults, isEmpty, bufferToJSON];

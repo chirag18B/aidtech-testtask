@@ -1,6 +1,6 @@
 const assert = require("assert");
 const sinon = require("sinon");
-const DonationManager = require("../donationManager");
+const DonationManager = require("../src/donationManager");
 
 describe("DonationManager", function() {
   let donation;
