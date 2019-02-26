@@ -1,30 +1,34 @@
-var assert = require('assert');
-var sinon = require('sinon');
-var DonationManager = require('../donationManager');
+const assert = require("assert");
+const sinon = require("sinon");
+const DonationManager = require("../donationManager");
 
-
-
-describe('DonationManager', function() {
-  var donation;
-  before(()=> {
+describe("DonationManager", function() {
+  let donation;
+  before(() => {
     donation = new DonationManager();
-  })
+  });
 
-  it('should return -1 when the value is not present', function() {
+  describe("Init", function() {
+    it("should init successfully when passed with zero arguments", function() {
+      const stub = {
+        getFunctionAndParameters: () => {}
+      };
 
-    const stub = {
-      getFunctionAndParameters: () => {
-        return 'tkalfj'
-      }
-    }
+      const callback = sinon.stub(stub, "getFunctionAndParameters");
+      callback.returns({ fcn: "init", params: ["a", "c"] });
 
-    var callback = sinon.stub(stub, 'getFunctionAndParameters');
-    callback.returns(0);
-    
-    donation.Init({getFunctionAndParameters: stub.getFunctionAndParameters});
-    // assert.equal([1, 2, 3].indexOf(4), -1);
+      donation.Init(stub);
+      // assert.equal([1, 2, 3].indexOf(4), -1);
+    });
+  });
+
+  describe("Invoke", function() {
+    describe("readDonation", function() {});
+    describe("readMultipleDonations", function() {});
+    describe("isPresent", function() {});
+    describe("getHistoryForDonation", function() {});
+    describe("addDonation", function() {});
+    describe("updateDonation", function() {});
+    describe("removeDonation", function() {});
   });
 });
-
-
-
