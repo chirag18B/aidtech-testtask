@@ -121,10 +121,10 @@ peer chaincode query -C aidtechchannel -n donation-manager-chaincode -c '{"Args"
 Can be used to read the data for multiple donation IDs.
 
 ```sh
-peer chaincode query -C aidtechchannel -n donation-manager-chaincode -c '{"Args":["readMultipleDonations","929cd618f0c6598eddaff18fa8ffab809ce1f35cb31a3270aa1fc80f1f92b85b", "8fefcd410881962355a6366f9394f44e68496065b91b5ab0cffcda94fed565c5", "7d0a59f560e88b7f8e1019353bb38786b8f981e6a62b9cc54204314591f4380r"]}'
+peer chaincode query -C aidtechchannel -n donation-manager-chaincode -c '{"Args":["readMultipleDonations","929cd618f0c6598eddaff18fa8ffab809ce1f35cb31a3270aa1fc80f1f92b85b", "c47eb9d83aae530a25831603184084050d2fee33383f597454e8d0cc517ed1f1", "7d0a59f560e88b7f8e1019353bb38786b8f981e6a62b9cc54204314591f4380r"]}'
 
 // Expected Output Format:
-{"929cd618f0c6598eddaff18fa8ffab809ce1f35cb31a3270aa1fc80f1f92b85b":{"key":"929cd618f0c6598eddaff18fa8ffab809ce1f35cb31a3270aa1fc80f1f92b85b","value":{"project":"ITU","itemType":"toys","amount":1,"timestamp":{"seconds":{"low":1551102037,"high":0,"unsigned":false},"nanos":512532845},"validity":true}},"8fefcd410881962355a6366f9394f44e68496065b91b5ab0cffcda94fed565c5":{"key":"8fefcd410881962355a6366f9394f44e68496065b91b5ab0cffcda94fed565c5","value":null},"7d0a59f560e88b7f8e1019353bb38786b8f981e6a62b9cc54204314591f4380r":{"key":"7d0a59f560e88b7f8e1019353bb38786b8f981e6a62b9cc54204314591f4380r","value":null}}
+{"929cd618f0c6598eddaff18fa8ffab809ce1f35cb31a3270aa1fc80f1f92b85b":{"value":null},"c47eb9d83aae530a25831603184084050d2fee33383f597454e8d0cc517ed1f1":{"value":{"project":"ITU","itemType":"toys","amount":"1","timestamp":{"seconds":{"low":1551265041,"high":0,"unsigned":false},"nanos":151019250},"validity":true}},"7d0a59f560e88b7f8e1019353bb38786b8f981e6a62b9cc54204314591f4380r":{"value":null}}
 ```
 
 ### isPresent
@@ -205,3 +205,51 @@ OR
 
 docker logs -f dev-peer0.orgtwo.aidtech.com-donation-manager-chaincode-1.0
 ```
+
+## Running tests
+
+To run tests you need to go where the related chaincode is kept. And install all the required dependencies first. Make sure you are using node `v8.14.0`. To do this, run the following in you terminal:
+
+```sh
+cd path/to/project
+cd chaincode/donation_manager_chaincode/node
+
+npm install
+
+npm test
+
+//Expected result ends like:
+62 passing (146ms)
+```
+
+## Creating JSDOC
+
+To create a JSDOC you need to have `jsdoc` package installed in your system. I recommend installing it globally using the following command:
+
+```sh
+npm install -g jsdoc
+```
+
+Once you have jsdoc you can create a documentation for donationManager chaincode by running the following command (Make sure you are present within node directory of this project):
+
+```sh
+jsdoc ./src/donationManager.js
+```
+
+You should be able to open it in chrome (if you are using linux), by running the following command:
+
+```sh
+google-chrome ./out/index.html 
+```
+
+Then you can browse and know more about the functions explained above using it.
+
+## Future scope
+
+This test task was done in a limited frame of time, so I suggest some changes to make it better;
+
+- **Changing unique identifiers used to store donations:** We have used transaction IDs to store donation objects, it would be better if we can use some other unique identifier to do this. It would also allow us to add validations to check that nomady can create a donation object for an already existing ID. It will also reduce confusion, as we seprate the two different functionalities. it will also help us create range queries if identifiers used are incremental in nature.
+
+- **Using composite keys:** We can create composite keys within the chaincode and using them create functions to query donations with same project, item type or amount.
+
+- **Improve test cases:** If I had more time I can improve the quality of test cases.
