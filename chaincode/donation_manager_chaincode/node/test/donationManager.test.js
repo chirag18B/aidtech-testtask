@@ -1,7 +1,7 @@
 const assert = require("assert");
 
 const DonationManager = require("../src/donationManager");
-const { createStubAndCallback } = require("./helper");
+const { createStubAndStubFunctions, bufferToJSON } = require("./testHelper");
 
 describe("DonationManager", () => {
   let donation = null;
@@ -11,13 +11,16 @@ describe("DonationManager", () => {
 
   describe("Init", () => {
     it("should fail when passed with one or more arguments", () => {
-      const { callback, stub } = createStubAndCallback(
+      const { stubFunctions, stub } = createStubAndStubFunctions([
         "getFunctionAndParameters"
-      );
-      callback.returns({ fcn: "init", params: ["unexpected param"] });
+      ]);
+      stubFunctions.getFunctionAndParameters.returns({
+        fcn: "init",
+        params: ["unexpected param"]
+      });
 
       const response = donation.Init(stub);
-      const { status, message, payload } = response;
+      const { status, message } = response;
       assert.equal(status, 500);
       assert.equal(
         message,
@@ -26,26 +29,19 @@ describe("DonationManager", () => {
     });
 
     it("should init successfully when passed with zero arguments", () => {
-      const { callback, stub } = createStubAndCallback(
+      const { stubFunctions, stub } = createStubAndStubFunctions([
         "getFunctionAndParameters"
-      );
+      ]);
 
-      callback.returns({ fcn: "init", params: [] });
+      stubFunctions.getFunctionAndParameters.returns({
+        fcn: "init",
+        params: []
+      });
 
       const response = donation.Init(stub);
-      const { status, message, payload } = response;
+      const { status, message } = response;
       assert.equal(status, 200);
       assert.equal(message, "");
     });
-  });
-
-  describe("Invoke", () => {
-    describe("addDonation", () => {});
-    describe("updateDonation", () => {});
-    describe("removeDonation", () => {});
-    describe("readDonation", () => {});
-    describe("readMultipleDonations", () => {});
-    describe("isPresent", () => {});
-    describe("getHistoryForDonation", () => {});
   });
 });
