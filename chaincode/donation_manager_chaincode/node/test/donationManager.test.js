@@ -1155,5 +1155,140 @@ describe("DonationManager", () => {
         );
       });
     });
+
+    describe("readDonation", () => {
+      it("should fail if donation ID length is not 64", async () => {
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b"
+          ]
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns([
+          "readDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b"
+        ]);
+
+        const readDonationResponse = await donation.Invoke(readStub);
+        assert.equal(readDonationResponse.status, 500);
+        assert.equal(
+          readDonationResponse.message,
+          "Error: Invalid number of arguments. Expected 64, got 63 in args: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b."
+        );
+      });
+
+      it("should fail if number of arguments passed is not one", async () => {
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readDonation",
+          params: []
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns(["readDonation"]);
+
+        const readDonationResponse = await donation.Invoke(readStub);
+        assert.equal(readDonationResponse.status, 500);
+        assert.equal(
+          readDonationResponse.message,
+          "Error: Invalid number of arguments. Expected 1, got 0 in args: ."
+        );
+      });
+
+      it("should fail if state retrived for given ID is empty", async () => {
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns([
+          "readDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+
+        readStubFunctions.getState.returns("");
+        const readDonationResponse = await donation.Invoke(readStub);
+        assert.equal(readDonationResponse.status, 500);
+        assert.equal(
+          readDonationResponse.message,
+          "Error: Failed to get state."
+        );
+      });
+
+      it("should return donation data for given ID", async () => {
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns([
+          "readDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+        const expectedResult2 = {
+          key:
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3",
+          value: null
+        };
+        readStubFunctions.getState.returns(
+          Buffer.from(JSON.stringify(expectedResult2.value))
+        );
+        const readDonationResponse = await donation.Invoke(readStub);
+        assert.equal(readDonationResponse.status, 200);
+        assert.equal(readDonationResponse.message, "");
+        assert.equal(bufferToJSON(readDonationResponse.payload).value, null);
+      });
+    });
   });
 });
