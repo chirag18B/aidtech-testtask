@@ -1,7 +1,7 @@
 const assert = require("assert");
 
 const DonationManager = require("../src/donationManager");
-const { createStubAndStubFunctions, bufferToJSON } = require("./testHelper");
+const { createStubAndStubFunctions, bufferToJSON } = require("./testHelpers");
 
 describe("DonationManager", () => {
   let donation = null;
