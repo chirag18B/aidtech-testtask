@@ -1442,5 +1442,152 @@ describe("DonationManager", () => {
         );
       });
     });
+
+    describe("isPresent", () => {
+      it("should fail if donation ID length is not 64", async () => {
+        const isPresentResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const isPresentStubFunctions = isPresentResult.stubFunctions;
+        const isPresentStub = isPresentResult.stub;
+
+        isPresentStubFunctions.getFunctionAndParameters.returns({
+          fcn: "isPresent",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2a"
+          ]
+        });
+        isPresentStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        isPresentStubFunctions.getArgs.returns([
+          "isPresent",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2a"
+        ]);
+
+        isPresentStubFunctions.getState.returns("");
+        const isPresentResponse = await donation.Invoke(isPresentStub);
+        assert.equal(isPresentResponse.status, 500);
+        assert.equal(
+          isPresentResponse.message,
+          "Error: Invalid number of arguments. Expected 64, got 65 in args: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2a."
+        );
+      });
+
+      it("should fail if number of arguments passed is not one", async () => {
+        const isPresentResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const isPresentStubFunctions = isPresentResult.stubFunctions;
+        const isPresentStub = isPresentResult.stub;
+
+        isPresentStubFunctions.getFunctionAndParameters.returns({
+          fcn: "isPresent",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+            "unexpected param"
+          ]
+        });
+        isPresentStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        isPresentStubFunctions.getArgs.returns([
+          "isPresent",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+          "unexpected param"
+        ]);
+
+        isPresentStubFunctions.getState.returns("");
+        const isPresentResponse = await donation.Invoke(isPresentStub);
+        assert.equal(isPresentResponse.status, 500);
+        assert.equal(
+          isPresentResponse.message,
+          "Error: Invalid number of arguments. Expected 1, got 2 in args: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2,unexpected param."
+        );
+      });
+
+      it("should return true for already present ID", async () => {
+        const isPresentResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const isPresentStubFunctions = isPresentResult.stubFunctions;
+        const isPresentStub = isPresentResult.stub;
+
+        isPresentStubFunctions.getFunctionAndParameters.returns({
+          fcn: "isPresent",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2"
+          ]
+        });
+        isPresentStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        isPresentStubFunctions.getArgs.returns([
+          "isPresent",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2"
+        ]);
+
+        const value = {
+          project: "ITUa",
+          itemType: "toys",
+          amount: "1a1",
+          timestamp: {
+            seconds: { low: 1551188076, high: 0, unsigned: false },
+            nanos: 72402371
+          },
+          validity: false
+        };
+        isPresentStubFunctions.getState.returns(
+          Buffer.from(JSON.stringify(value))
+        );
+        const isPresentResponse = await donation.Invoke(isPresentStub);
+        assert.equal(isPresentResponse.status, 200);
+        assert.equal(isPresentResponse.payload.toString(), '{"exists":true}');
+      });
+
+      it("should return false for ID not in state store", async () => {
+        const isPresentResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const isPresentStubFunctions = isPresentResult.stubFunctions;
+        const isPresentStub = isPresentResult.stub;
+
+        isPresentStubFunctions.getFunctionAndParameters.returns({
+          fcn: "isPresent",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2"
+          ]
+        });
+        isPresentStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        isPresentStubFunctions.getArgs.returns([
+          "isPresent",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2"
+        ]);
+
+        isPresentStubFunctions.getState.returns("");
+        const isPresentResponse = await donation.Invoke(isPresentStub);
+        assert.equal(isPresentResponse.status, 200);
+        assert.equal(isPresentResponse.payload.toString(), '{"exists":false}');
+      });
+    });
+
   });
 });
