@@ -920,5 +920,240 @@ describe("DonationManager", () => {
         );
       });
     });
+
+    describe("removeDonation", () => {
+      it("should fail if donation ID length is not 64", async () => {
+        const { stubFunctions, stub } = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "deleteState",
+          "getState"
+        ]);
+
+        stubFunctions.getFunctionAndParameters.returns({
+          fcn: "removeDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b"
+          ]
+        });
+        stubFunctions.getTxID.returns(
+          "684a1b9eb44ce9925af5227be06ecf458b8fa34e7b4c374d7f766c5a50426aaf"
+        );
+        stubFunctions.getArgs.returns([
+          "removeDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b"
+        ]);
+
+        const response = await donation.Invoke(stub);
+        const { status, message } = response;
+        assert.equal(status, 500);
+        assert.equal(
+          message,
+          "Error: Invalid number of arguments. Expected 64, got 63 in args: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b."
+        );
+      });
+
+      it("should fail if number of arguments passed is not one", async () => {
+        const { stubFunctions, stub } = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "deleteState",
+          "getState"
+        ]);
+
+        stubFunctions.getFunctionAndParameters.returns({
+          fcn: "removeDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3",
+            "unexpected param"
+          ]
+        });
+        stubFunctions.getTxID.returns(
+          "684a1b9eb44ce9925af5227be06ecf458b8fa34e7b4c374d7f766c5a50426aaf"
+        );
+        stubFunctions.getArgs.returns([
+          "removeDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3",
+          "unexpected param"
+        ]);
+
+        const response = await donation.Invoke(stub);
+        const { status, message } = response;
+        assert.equal(status, 500);
+        assert.equal(
+          message,
+          "Error: Invalid number of arguments. Expected 1, got 2 in args: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3,unexpected param."
+        );
+      });
+
+      it("should fail if state retrived for given ID is empty", async () => {
+        const { stubFunctions, stub } = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "deleteState",
+          "getState"
+        ]);
+
+        stubFunctions.getFunctionAndParameters.returns({
+          fcn: "removeDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        stubFunctions.getTxID.returns(
+          "684a1b9eb44ce9925af5227be06ecf458b8fa34e7b4c374d7f766c5a50426aaf"
+        );
+        stubFunctions.getArgs.returns([
+          "removeDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+        stubFunctions.getState.returns("");
+
+        const response = await donation.Invoke(stub);
+        const { status, message } = response;
+        assert.equal(status, 500);
+        assert.equal(
+          message,
+          "Error: Failed to delete state for Donation ID: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3. Received Error: Donation data is absent OR no state registered."
+        );
+      });
+
+      it("should delete record for readDonation function", async () => {
+        const deleteResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "deleteState",
+          "getState"
+        ]);
+
+        const deleteFn = deleteResult.stubFunctions;
+        const deleteStub = deleteResult.stub;
+
+        deleteFn.getFunctionAndParameters.returns({
+          fcn: "removeDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        deleteFn.getTxID.returns(
+          "684a1b9eb44ce9925af5227be06ecf458b8fa34e7b4c374d7f766c5a50426aaf"
+        );
+        deleteFn.getArgs.returns([
+          "removeDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+        const expectedResult1 = {
+          key:
+            "b4351dc14c6b95590eac29c0b02b42760a91b2f83b35d850f9494f5cc9788807",
+          value: {
+            project: "ITU",
+            itemType: "toys",
+            amount: "1",
+            timestamp: {
+              seconds: { low: 1551188076, high: 0, unsigned: false },
+              nanos: 72402371
+            },
+            validity: false
+          }
+        };
+        deleteFn.getState.returns(
+          Buffer.from(JSON.stringify(expectedResult1.value))
+        );
+        const response = await donation.Invoke(deleteStub);
+        const { status } = response;
+        assert.equal(status, 200);
+
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns([
+          "readDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+        const expectedResult2 = {
+          key:
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3",
+          value: null
+        };
+        readStubFunctions.getState.returns(
+          Buffer.from(JSON.stringify(expectedResult2.value))
+        );
+        const readDonationResponse = await donation.Invoke(readStub);
+        assert.equal(readDonationResponse.status, 200);
+        assert.equal(readDonationResponse.message, "");
+        assert.equal(bufferToJSON(readDonationResponse.payload).value, null);
+      });
+
+      it("should return deleteTx and donationId", async () => {
+        const deleteResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "deleteState",
+          "getState"
+        ]);
+
+        const deleteFn = deleteResult.stubFunctions;
+        const deleteStub = deleteResult.stub;
+
+        deleteFn.getFunctionAndParameters.returns({
+          fcn: "removeDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        deleteFn.getTxID.returns(
+          "684a1b9eb44ce9925af5227be06ecf458b8fa34e7b4c374d7f766c5a50426aaf"
+        );
+        deleteFn.getArgs.returns([
+          "removeDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+        const expectedResult1 = {
+          key:
+            "b4351dc14c6b95590eac29c0b02b42760a91b2f83b35d850f9494f5cc9788807",
+          value: {
+            project: "ITU",
+            itemType: "toys",
+            amount: "1",
+            timestamp: {
+              seconds: { low: 1551188076, high: 0, unsigned: false },
+              nanos: 72402371
+            },
+            validity: false
+          }
+        };
+        deleteFn.getState.returns(
+          Buffer.from(JSON.stringify(expectedResult1.value))
+        );
+        const response = await donation.Invoke(deleteStub);
+        const { status, payload } = response;
+        assert.equal(status, 200);
+        assert.equal(
+          payload.toString(),
+          '{"donationId":"337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3","deleteTx":"684a1b9eb44ce9925af5227be06ecf458b8fa34e7b4c374d7f766c5a50426aaf"}'
+        );
+      });
+    });
   });
 });
