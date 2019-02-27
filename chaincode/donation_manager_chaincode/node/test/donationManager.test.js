@@ -1290,5 +1290,157 @@ describe("DonationManager", () => {
         assert.equal(bufferToJSON(readDonationResponse.payload).value, null);
       });
     });
+
+    describe("readMultipleDonations", () => {
+      it("should fail if args provided are not in array format", async () => {
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readMultipleDonations",
+          params: {
+            unexpectedArray: [
+              "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+              "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+            ]
+          }
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns([
+          "readMultipleDonations",
+          {
+            unexpectedArray: [
+              "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+              "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+            ]
+          }
+        ]);
+        readStubFunctions.getState.returns(Buffer.from(JSON.stringify(null)));
+
+        const readMultipleDonationsResponse = await donation.Invoke(readStub);
+        assert.equal(readMultipleDonationsResponse.status, 500);
+        assert.equal(
+          readMultipleDonationsResponse.message,
+          "Error: Invalid argument type. Expected array, got object [object Object]."
+        );
+      });
+
+      it("should fail if donation ID length is not 64", async () => {
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readMultipleDonations",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b21",
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns([
+          "readMultipleDonations",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b21",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+
+        readStubFunctions.getState.returns(Buffer.from(JSON.stringify(null)));
+        const readMultipleDonationsResponse = await donation.Invoke(readStub);
+        assert.equal(readMultipleDonationsResponse.status, 500);
+        assert.equal(
+          readMultipleDonationsResponse.message,
+          "Error: Invalid number of arguments. Expected 64, got 65 in args: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b21."
+        );
+      });
+
+      it("should fail if state retrived for given ID is empty", async () => {
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readMultipleDonations",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns([
+          "readMultipleDonations",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+
+        readStubFunctions.getState.returns("");
+        const readMultipleDonationsResponse = await donation.Invoke(readStub);
+        assert.equal(readMultipleDonationsResponse.status, 500);
+        assert.equal(
+          readMultipleDonationsResponse.message,
+          "Error: Failed to get state."
+        );
+      });
+
+      it("should return donation data for given IDs", async () => {
+        const readResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getState"
+        ]);
+
+        const readStubFunctions = readResult.stubFunctions;
+        const readStub = readResult.stub;
+
+        readStubFunctions.getFunctionAndParameters.returns({
+          fcn: "readMultipleDonations",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+          ]
+        });
+        readStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        readStubFunctions.getArgs.returns([
+          "readMultipleDonations",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3"
+        ]);
+
+        readStubFunctions.getState.returns(Buffer.from(JSON.stringify(null)));
+        const readMultipleDonationsResponse = await donation.Invoke(readStub);
+        assert.equal(readMultipleDonationsResponse.status, 200);
+        assert.equal(
+          readMultipleDonationsResponse.payload.toString(),
+          '{"337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2":{"value":null},"337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b3":{"value":null}}'
+        );
+      });
+    });
   });
 });
