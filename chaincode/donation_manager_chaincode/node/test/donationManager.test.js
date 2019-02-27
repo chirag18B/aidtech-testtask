@@ -1589,5 +1589,143 @@ describe("DonationManager", () => {
       });
     });
 
+    describe("getHistoryForDonation", () => {
+      it("should fail if donation ID length is not 64", async () => {
+        const getHistoryForDonationResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getHistoryForKey"
+        ]);
+
+        const getHistoryForDonationStubFunctions =
+          getHistoryForDonationResult.stubFunctions;
+        const getHistoryForDonationStub = getHistoryForDonationResult.stub;
+
+        getHistoryForDonationStubFunctions.getFunctionAndParameters.returns({
+          fcn: "getHistoryForDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2a"
+          ]
+        });
+        getHistoryForDonationStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        getHistoryForDonationStubFunctions.getArgs.returns([
+          "getHistoryForDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2a"
+        ]);
+        const expectedIterator = {
+          next: () => {
+            return { done: true };
+          },
+          close: () => {}
+        };
+        getHistoryForDonationStubFunctions.getHistoryForKey.returns(
+          expectedIterator
+        );
+
+        const getHistoryForDonationResponse = await donation.Invoke(
+          getHistoryForDonationStub
+        );
+
+        assert.equal(getHistoryForDonationResponse.status, 500);
+        assert.equal(
+          getHistoryForDonationResponse.message,
+          "Error: Invalid number of arguments. Expected 64, got 65 in args: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2a."
+        );
+      });
+
+      it("should fail if number of arguments passed is not one", async () => {
+        const getHistoryForDonationResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getHistoryForKey"
+        ]);
+
+        const getHistoryForDonationStubFunctions =
+          getHistoryForDonationResult.stubFunctions;
+        const getHistoryForDonationStub = getHistoryForDonationResult.stub;
+
+        getHistoryForDonationStubFunctions.getFunctionAndParameters.returns({
+          fcn: "getHistoryForDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+            "unexpected param"
+          ]
+        });
+        getHistoryForDonationStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        getHistoryForDonationStubFunctions.getArgs.returns([
+          "getHistoryForDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2",
+          "unexpected param"
+        ]);
+        const expectedIterator = {
+          next: () => {
+            return { done: true };
+          },
+          close: () => {}
+        };
+        getHistoryForDonationStubFunctions.getHistoryForKey.returns(
+          expectedIterator
+        );
+
+        const getHistoryForDonationResponse = await donation.Invoke(
+          getHistoryForDonationStub
+        );
+
+        assert.equal(getHistoryForDonationResponse.status, 500);
+        assert.equal(
+          getHistoryForDonationResponse.message,
+          "Error: Invalid number of arguments. Expected 1, got 2 in args: 337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2,unexpected param."
+        );
+      });
+
+      it("should return empty array if no history found", async () => {
+        const getHistoryForDonationResult = createStubAndStubFunctions([
+          "getFunctionAndParameters",
+          "getTxID",
+          "getArgs",
+          "getHistoryForKey"
+        ]);
+
+        const getHistoryForDonationStubFunctions =
+          getHistoryForDonationResult.stubFunctions;
+        const getHistoryForDonationStub = getHistoryForDonationResult.stub;
+
+        getHistoryForDonationStubFunctions.getFunctionAndParameters.returns({
+          fcn: "getHistoryForDonation",
+          params: [
+            "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2"
+          ]
+        });
+        getHistoryForDonationStubFunctions.getTxID.returns(
+          "32d0867a0c247dd6904cc00fa6f2ec8b162ed2fb788067605da54906e4cf6626"
+        );
+        getHistoryForDonationStubFunctions.getArgs.returns([
+          "getHistoryForDonation",
+          "337a9dbc0fc982c8d46150b3198c182d82a5bf540f27a56cfnf2edc8a2ea19b2"
+        ]);
+        const expectedIterator = {
+          next: () => {
+            return { done: true };
+          },
+          close: () => {}
+        };
+        getHistoryForDonationStubFunctions.getHistoryForKey.returns(
+          expectedIterator
+        );
+
+        const getHistoryForDonationResponse = await donation.Invoke(
+          getHistoryForDonationStub
+        );
+
+        assert.equal(getHistoryForDonationResponse.status, 200);
+        assert.equal(getHistoryForDonationResponse.payload.toString(), "[]");
+      });
+    });
   });
 });
