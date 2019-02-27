@@ -248,8 +248,14 @@ Then you can browse and know more about the functions explained above using it.
 
 This test task was done in a limited frame of time, so I suggest some changes to make it better;
 
-- **Changing unique identifiers used to store donations:** We have used transaction IDs to store donation objects, it would be better if we can use some other unique identifier to do this. It would also allow us to add validations to check that nomady can create a donation object for an already existing ID. It will also reduce confusion, as we seprate the two different functionalities. it will also help us create range queries if identifiers used are incremental in nature.
+- **Changing unique identifiers used to store donations:** We have used transaction IDs to store donation objects, it would be better if we can use some other unique identifier to do this. It would also allow us to add validations to check that no one can create a donation object for an already existing ID. Also while updating a donation object, we update validity and timestamp, but the donation ID is not updated with the new transaction ID of update. It will also reduce confusion, as we seprate the two different functionalities.
+
+- **Using range queries:**-  If identifiers used to store donation objects are incremental in nature. We will be able to create range queries. 
 
 - **Using composite keys:** We can create composite keys within the chaincode and using them create functions to query donations with same project, item type or amount.
 
 - **Improve test cases:** If I had more time I can improve the quality of test cases.
+
+- **Create an advanced network setup:**-  This test task uses a very basic network setup with 2 orgs having one peer each. We can modify it to make an advanced more stable network.
+
+- **Create an advanced network setup:**-  The network present has configuration ready for couchDB setup, we can make minor tweaks and start using CouchDB instead of LevelDB as state store.
