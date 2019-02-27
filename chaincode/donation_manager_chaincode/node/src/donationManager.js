@@ -129,7 +129,6 @@ class DonationManager {
       donationData = Helpers.defaultToUndefinedIfEmpty(donationData);
 
       response[donationId] = {
-        key: donationId,
         value: Helpers.bufferToJSON(donationData)
       };
     }

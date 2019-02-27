@@ -57,7 +57,7 @@ function formatToJson(args) {
   let obj = {
     project: args[INDEX.project],
     itemType: args[INDEX.itemType],
-    amount: parseFloat(args[INDEX.amount]),
+    amount: args[INDEX.amount],
     timestamp: args[INDEX.timestamp],
     validity: args[INDEX.validity]
   };

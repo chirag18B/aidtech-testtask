@@ -134,7 +134,7 @@ function isValidAmount(givenAmount) {
   const result = !isNaN(givenAmount);
   if (!result) {
     console.info(
-      `Given amount: ${givenamount}, is not valid.`,
+      `Given amount: ${givenAmount}, is not valid.`,
       `It should be a number`
     );
   }
